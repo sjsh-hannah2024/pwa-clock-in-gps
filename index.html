@@ -5,53 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clock In/Out App</title>
     <link rel="manifest" href="/manifest.json">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
     <style>
         #map { height: 200px; }
         #barcode-detection-video { width: 100%; height: auto; display: none; }
     </style>
 </head>
-<body>
+<body class="bg-f7f8fa text-212529 font-lato">
 
-    <h1>Clock In/Out App</h1>
+    <div class="min-h-screen flex flex-col justify-center items-center">
+        <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+            <h1 class="text-3xl font-normal text-center mb-8 text-white bg-3146c5 p-4 rounded-lg">Clock In/Out App</h1>
 
-    <div id="step-1">
-        <p>Are you clocking in or out?</p>
-        <button onclick="startProcess('clock-in')">Clock In</button>
-        <button onclick="startProcess('clock-out')">Clock Out</button>
+            <div id="step-1" class="space-y-4">
+                <p class="text-lg font-semibold text-center text-333333">Are you clocking in or out?</p>
+                <div class="flex justify-around">
+                    <button onclick="startProcess('clock-in')" class="bg-3146c5 hover:bg-212529 text-white font-bold py-2 px-4 rounded-lg shadow">
+                        Clock In
+                    </button>
+                    <button onclick="startProcess('clock-out')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow">
+                        Clock Out
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-2" class="mt-8 space-y-4" style="display:none;">
+                <p class="text-lg font-semibold text-center text-333333">Do you have a QR code to scan?</p>
+                <div class="flex justify-around">
+                    <button onclick="handleQRCode(true)" class="bg-7ffccc hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow">
+                        Yes
+                    </button>
+                    <button onclick="handleQRCode(false)" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow">
+                        No
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-3" class="mt-8 space-y-4" style="display:none;">
+                <div id="selectLocation" style="display:none;">
+                    <p class="text-lg font-semibold text-333333">Select your location:</p>
+                    <select id="locationSelect" class="mt-2 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3 shadow-sm focus:outline-none focus:ring-3146c5 focus:border-3146c5">
+                        <option value="Location 1">Location 1</option>
+                        <option value="Location 2">Location 2</option>
+                        <option value="Location 3">Location 3</option>
+                    </select>
+                </div>
+
+                <div id="inputName" style="display:none;">
+                    <p class="text-lg font-semibold text-333333">Enter your name:</p>
+                    <input type="text" id="nameInput" class="mt-2 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3 shadow-sm focus:outline-none focus:ring-3146c5 focus:border-3146c5">
+                </div>
+
+                <div id="inputDetails" style="display:none;">
+                    <p class="text-lg font-semibold text-333333">Additional Details:</p>
+                    <label for="roleInput" class="block text-sm font-medium text-212529">Role:</label>
+                    <input type="text" id="roleInput" class="mt-1 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3 shadow-sm focus:outline-none focus:ring-3146c5 focus:border-3146c5">
+                    
+                    <label for="breakInput" class="block text-sm font-medium text-212529 mt-4">Break Duration (mins):</label>
+                    <input type="number" id="breakInput" class="mt-1 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3 shadow-sm focus:outline-none focus:ring-3146c5 focus:border-3146c5">
+                    
+                    <label for="earlyFinishInput" class="block text-sm font-medium text-212529 mt-4">Finishing Earlier? (Yes/No):</label>
+                    <input type="text" id="earlyFinishInput" class="mt-1 block w-full bg-white border border-gray-300 rounded-lg py-2 px-3 shadow-sm focus:outline-none focus:ring-3146c5 focus:border-3146c5">
+                </div>
+
+                <button onclick="finalize()" class="bg-3146c5 hover:bg-212529 text-white font-bold py-2 px-4 rounded-lg shadow w-full mt-4">
+                    Submit
+                </button>
+            </div>
+        </div>
+
+        <video id="barcode-detection-video" class="mt-8 rounded-lg shadow-lg"></video>
     </div>
-
-    <div id="step-2" style="display:none;">
-        <p>Do you have a QR code to scan?</p>
-        <button onclick="handleQRCode(true)">Yes</button>
-        <button onclick="handleQRCode(false)">No</button>
-    </div>
-
-    <div id="step-3" style="display:none;">
-        <p id="selectLocation" style="display:none;">
-            Select your location:
-            <select id="locationSelect">
-                <option value="Location 1">Location 1</option>
-                <option value="Location 2">Location 2</option>
-                <option value="Location 3">Location 3</option>
-            </select>
-        </p>
-        <p id="inputName" style="display:none;">
-            Enter your name:
-            <input type="text" id="nameInput">
-        </p>
-        <p id="inputDetails" style="display:none;">
-            <label for="roleInput">Role:</label>
-            <input type="text" id="roleInput"><br>
-            <label for="breakInput">Break Duration (mins):</label>
-            <input type="number" id="breakInput"><br>
-            <label for="earlyFinishInput">Finishing Earlier? (Yes/No):</label>
-            <input type="text" id="earlyFinishInput">
-        </p>
-        <button onclick="finalize()">Submit</button>
-    </div>
-
-    <video id="barcode-detection-video"></video>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="main.js"></script>
